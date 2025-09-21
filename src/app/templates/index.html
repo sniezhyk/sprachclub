@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Top Deutsche Online Sprachclubs | Deutsch sprechen & üben</title>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="static/style.css" />
+
+  <!-- Scripts -->
+  <script src="static/App.js" defer></script>
+</head>
+
+<body>
+  <!-- Navigation -->
+  <header class="nav" role="banner">
+    <a class="brand" href="/" aria-label="Sprachclubs">
+      <span class="logo">Sprachclubs</span>
+    </a>
+
+    <nav class="nav-main" aria-label="Hauptnavigation">
+      <a href="#termine" class="btn btn-primary">Termine</a>
+
+      <div class="menu" data-menu>
+        <button id="help-toggle" class="btn btn-link" aria-haspopup="true" aria-expanded="false"
+                aria-controls="help-menu">
+          Hilfe
+        </button>
+        <ul id="help-menu" class="dropdown" role="menu" aria-labelledby="help-toggle" hidden>
+          <li role="none"><a role="menuitem" href="#easy-start" class="dropdown-item">Easy Start</a></li>
+          <li role="none"><a role="menuitem" href="#faq" class="dropdown-item">FAQ</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Dynamisch befüllt (Login/Registrieren ODER Mein Konto/Logout) -->
+    <nav id="nav-right" class="nav-right" aria-label="Benutzeraktionen"></nav>
+  </header>
+
+  <!-- Hauptinhalt -->
+  <main class="container" role="main">
+    <!-- Hero -->
+    <section class="hero">
+      <h1>Finde & buche deinen Deutsch-Sprachclub</h1>
+      <p class="muted">Wähle Niveau, Termin und sichere dir deinen Platz – schnell und unkompliziert.</p>
+    </section>
+
+    <!-- Filter -->
+    <section class="filters" aria-label="Filter">
+      <form id="filter-form" class="row" autocomplete="off">
+        <label class="field">
+          <span>Stichwort</span>
+          <input type="search" id="q" name="q" placeholder="Thema oder Begriff" />
+        </label>
+        <label class="field">
+          <span>Niveau</span>
+          <select id="level" name="level">
+            <option value="">Alle</option>
+            <option value="A2.1">A2.1</option>
+            <option value="A2.2">A2.2</option>
+            <option value="A2/B1">A2/B1</option>
+            <option value="B2/C1">B2/C1</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Ab Datum</span>
+          <input type="date" id="from" name="from" />
+        </label>
+        <button type="submit" class="btn">Suchen</button>
+      </form>
+    </section>
+
+    <!-- Ergebnisliste -->
+    <section class="list-wrap" aria-live="polite" aria-busy="false">
+      <ul id="club-list" class="grid"></ul>
+      <p id="empty" class="muted">Keine passenden Sprachclubs gefunden.</p>
+    </section>
+
+    <!-- (Optional) Pagination -->
+    <nav id="pager" class="pager" aria-label="Seitennavigation" hidden>
+      <button id="prev" class="btn btn-ghost" disabled>Zurück</button>
+      <span id="page-info" class="muted"></span>
+      <button id="next" class="btn btn-ghost" disabled>Weiter</button>
+    </nav>
+  </main>
+
+  <!-- Auth-Dialog: Login / Registrierung -->
+  <dialog id="auth" class="dialog" aria-label="Anmeldung & Registrierung">
+    <div class="tabs" role="tablist">
+      <button id="tab-login" role="tab" aria-selected="true" aria-controls="panel-login">Login</button>
+      <button id="tab-register" role="tab" aria-selected="false" aria-controls="panel-register">Registrieren</button>
+    </div>
+
+    <!-- Login -->
+    <form id="panel-login" class="stack" role="tabpanel" aria-labelledby="tab-login" novalidate>
+      <div id="login-errors" class="error-summary" hidden></div>
+
+      <label class="field">
+        <span>E-Mail oder Nutzername</span>
+        <input type="text" name="email" required autocomplete="username" />
+        <small class="error-msg" hidden></small>
+      </label>
+
+      <label class="field">
+        <span>Passwort</span>
+        <input type="password" name="password" required autocomplete="current-password" />
+        <small class="error-msg" hidden></small>
+      </label>
+
+      <div class="row end">
+        <button type="button" class="btn btn-ghost close-auth">Abbrechen</button>
+        <button type="submit" class="btn">Einloggen</button>
+      </div>
+    </form>
+
+    <!-- Registrierung (normale User) -->
+    <form id="panel-register" class="stack" role="tabpanel" aria-labelledby="tab-register" hidden novalidate>
+      <div id="register-errors" class="error-summary" hidden></div>
+
+      <div class="grid-2">
+        <label class="field">
+          <span>Vorname</span>
+          <input type="text" name="first_name" required autocomplete="given-name" maxlength="80" />
+          <small class="error-msg" hidden></small>
+        </label>
+        <label class="field">
+          <span>Nachname</span>
+          <input type="text" name="last_name" required autocomplete="family-name" maxlength="80" />
+          <small class="error-msg" hidden></small>
+        </label>
+      </div>
+
+      <label class="field">
+        <span>Nutzername</span>
+        <input type="text" name="username" required autocomplete="username" maxlength="32" />
+        <small class="error-msg" hidden></small>
+      </label>
+
+      <label class="field">
+        <span>E-Mail</span>
+        <input type="email" name="email" required autocomplete="email" maxlength="254" />
+        <small class="error-msg" hidden></small>
+      </label>
+
+      <div class="grid-2">
+        <label class="field">
+          <span>Passwort</span>
+          <input type="password" name="password" required autocomplete="new-password" minlength="8" />
+          <small class="muted">Mind. 8 Zeichen</small>
+          <small class="error-msg" hidden></small>
+        </label>
+        <label class="field">
+          <span>Passwort wiederholen</span>
+          <input type="password" name="password_repeat" required autocomplete="new-password" minlength="8" />
+          <small class="error-msg" hidden></small>
+        </label>
+      </div>
+
+      <label class="field">
+        <span>Geburtsdatum (optional)</span>
+        <input type="date" name="birth_date" />
+        <small class="error-msg" hidden></small>
+      </label>
+
+      <label class="check">
+        <input type="checkbox" name="tos" required />
+        <span>Ich akzeptiere die <a href="/agb" target="_blank" rel="noopener">AGB</a></span>
+      </label>
+
+      <div class="row end">
+        <button type="button" class="btn btn-ghost close-auth">Abbrechen</button>
+        <button type="submit" class="btn">Konto erstellen</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Details-Dialog -->
+  <dialog id="details" class="dialog" aria-label="Details zum Sprachclub">
+    <article class="stack">
+      <h2 id="d-title"></h2>
+      <p id="d-desc" class="muted"></p>
+      <div class="meta">
+        <span id="d-level" class="tag"></span>
+        <span id="d-when"></span>
+        <span id="d-capacity"></span>
+        <span id="d-price"></span>
+      </div>
+      <div class="row end">
+        <button type="button" class="btn btn-ghost" id="close-details">Schließen</button>
+        <button type="button" class="btn" id="book-now">Jetzt buchen</button>
+      </div>
+    </article>
+  </dialog>
+
+  <!-- Toast/Status -->
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h4>Sprachclub</h4>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/ueber-uns">Über uns</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Service</h4>
+        <ul>
+          <li><a href="/service">Service</a></li>
+          <li><a href="/kontakt">Kontakt</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-social">
+      <a href="https://t.me/deutsch_mit_sandra" target="_blank" rel="noopener">
+        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M9.7 13.8L9.5 18c.5 0 .8-.2 1.1-.5l2.6-2.4 5.4 4c1 .6 1.7.3 2-.9l3.6-16.7c.3-1.2-.4-1.7-1.4-1.4L1.4 9c-1.1.4-1.1 1.1-.2 1.4l6.8 2.1L19.3 6c.6-.4 1.1-.2.7.2z"/></svg>
+        <span>Telegram</span>
+      </a>
+
+      <a href="https://www.instagram.com/olexandra_slobodianiuk?igsh=dXhib3A1bm9haXJ2" target="_blank" rel="noopener">
+        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5m10 2H7a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3m-5 3.5a5.5 5.5 0 1 1 0 11a5.5 5.5 0 0 1 0-11m0 2a3.5 3.5 0 1 0 0 7a3.5 3.5 0 0 0 0-7M18 6.3a1 1 0 1 1 0 2a1 1 0 0 1 0-2"/></svg>
+        <span>Instagram</span>
+      </a>
+    </div>
+
+    <div class="footer-bottom">
+  © <span id="copyright-year"></span> Sprachclub ·
+  <a href="/datenschutz">Datenschutz</a> ·
+  <a href="/agb" target="_blank" rel="noopener">AGB</a> ·
+  <a href="/impressum">Impressum</a>
+</div>
+  </footer>
+</body>
+</html>
+

@@ -1,0 +1,57 @@
+:root{
+  --bg:#0b0c10; --card:#11141a; --muted:#9aa4b2;
+  --text:#e6edf3; --primary:#5b9cff; --danger:#ff6b6b; --ok:#39d98a; --warn:#ffd166;
+  --border:#1f2630;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,Segoe UI,Roboto,Arial}
+.navbar{
+  display:flex;gap:1rem;align-items:center;padding:0.75rem 1rem;border-bottom:1px solid var(--border);
+  background:#0f1217;position:sticky;top:0;z-index:10;box-shadow:0 6px 18px rgba(0,0,0,.25)
+}
+.navbar a{color:var(--text);text-decoration:none;opacity:.9}
+.navbar a:hover{opacity:1;text-decoration:underline}
+.navbar a.active{opacity:1;text-decoration:underline}
+.navbar .spacer{flex:1}
+.navbar .link{opacity:.9}
+.page{max-width:960px;margin:0 auto;padding:2rem 5%}
+h1{margin-bottom:.25rem}
+.muted{color:var(--muted);margin-bottom:1rem}
+.card{
+  background:linear-gradient(180deg,#121621 0%, #0d1117 100%);
+  border-radius:16px;border:1px solid var(--border);padding:1.25rem;
+  box-shadow:0 6px 18px rgba(0,0,0,.35)
+}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem 1.25rem}
+.col-span-2{grid-column:span 2}
+label{display:flex;flex-direction:column;gap:.4rem;font-weight:600;color:var(--text)}
+input, textarea, select{
+  border:1px solid var(--border);border-radius:10px;padding:.65rem .8rem;font-size:1rem;
+  background:var(--card);color:var(--text)
+}
+input::placeholder, textarea::placeholder{color:#7f8a99}
+input:focus, textarea:focus, select:focus{
+  outline:none;border-color:var(--primary);background:#0f141b;
+  box-shadow:0 0 0 3px rgba(91,156,255,.18)
+}
+.row{display:flex;gap:.5rem;align-items:center}
+.hint{color:var(--muted);font-weight:400}
+.actions{display:flex;gap:.75rem;margin-top:1rem}
+.btn{
+  appearance:none;border:1px solid var(--border);background:var(--card);
+  padding:.55rem .9rem;border-radius:10px;cursor:pointer;color:var(--text)
+}
+.btn:hover{border-color:#2a323f}
+.btn-ghost{background:transparent;border:1px dashed #4a5568}
+.btn-primary{background:var(--primary);border:none;color:#0b0c10}
+.btn-primary:hover{filter:brightness(.95)}
+.btn-danger{background:var(--danger);border:none;color:#0b0c10}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.msg{margin-top:1rem;min-height:1.25rem}
+.msg.success{color:var(--ok)}
+.msg.error{color:var(--danger)}
+.msg.warn{color:var(--warn)}
+@media (max-width:720px){
+  .grid{grid-template-columns:1fr}
+  .col-span-2{grid-column:span 1}
+}

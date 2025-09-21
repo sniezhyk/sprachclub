@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Messages</title>
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        margin: 0;
+      }
+      .wrap {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        height: 100vh;
+      }
+      .left {
+        border-right: 1px solid #e5e7eb;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+      }
+      .conv {
+        padding: 12px 14px;
+        cursor: pointer;
+        border-bottom: 1px solid #f1f5f9;
+      }
+      .conv.active {
+        background: #f8fafc;
+      }
+      .bubble {
+        max-width: 70%;
+        padding: 8px 10px;
+        border-radius: 12px;
+        margin: 6px 0;
+      }
+      .mine {
+        align-self: flex-end;
+        background: #dbeafe;
+      }
+      .theirs {
+        align-self: flex-start;
+        background: #f3f4f6;
+      }
+      .right {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+
+      .msgs {
+        flex: 1;
+        overflow-y: auto;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .composer {
+        display: flex;
+        gap: 8px;
+        padding: 10px;
+        border-top: 1px solid #e5e7eb;
+        background: white;
+      }
+
+      input[type="text"] {
+        padding: 10px;
+        border: 1px solid #cbd5e1;
+        border-radius: 10px;
+      }
+      #input {
+        flex: 1;
+      }
+      #recipient {
+        margin: 10px;
+        width: calc(100% - 20px);
+      }
+      button {
+        padding: 10px 14px;
+        border: 0;
+        border-radius: 10px;
+        background: #3b82f6;
+        color: white;
+      }
+      #error {
+        color: red;
+        font-size: 13px;
+        margin: 4px 10px;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <aside class="left">
+        <h3 style="padding: 12px 14px; margin: 0">Dialogs</h3>
+        <input id="recipient" type="text" placeholder="Enter username…" />
+        <div id="error">User not found</div>
+        <div id="conversations"></div>
+      </aside>
+      <section class="right">
+        <div id="messages" class="msgs"></div>
+        <div class="composer">
+          <input id="input" type="text" placeholder="Write a message…" />
+          <button id="send">Send</button>
+        </div>
+      </section>
+    </div>
+    <script>
+      const me = "{{ me }}";
+      let currentOther = null;
+
+      const convList = document.getElementById("conversations");
+      const msgs = document.getElementById("messages");
+      const input = document.getElementById("input");
+      const recipientInput = document.getElementById("recipient");
+      const btnSend = document.getElementById("send");
+      const errorBox = document.getElementById("error");
+
+      function el(tag, attrs = {}, ...children) {
+        const n = document.createElement(tag);
+        Object.entries(attrs).forEach(([k, v]) => n.setAttribute(k, v));
+        for (const c of children) n.append(c);
+        return n;
+      }
+
+      function renderMessage(m) {
+        const who = m.senderName === me ? "mine" : "theirs";
+        return el("div", { class: `bubble ${who}` }, m.text);
+      }
+
+      async function loadConversations() {
+        const r = await fetch("/msg/dialogs");
+        const conversations = await r.json();
+        convList.innerHTML = "";
+
+        for (const user of conversations.dialogs) {
+          addConversationToList(user);
+        }
+      }
+
+      function addConversationToList(user) {
+        if (Array.from(convList.children).some(c => c.dataset?.user === user)) {
+          return;
+        }
+        const item = el("div", { class: "conv", "data-user": user });
+        const title = el("div", {}, user);
+        const last = el(
+          "div",
+          { style: "font-size:12px; color:#64748b" },
+          "ONLINE"
+        );
+        item.append(title, last);
+        item.onclick = () => openDialog(user);
+        convList.append(item);
+      }
+
+      async function reloadChat(user) {
+        const r = await fetch(`/msg/with/${user}?page=1`);
+        const data = await r.json();
+
+        currentOther = user;
+        msgs.innerHTML = "";
+
+        Array.from(convList.children).forEach((c) =>
+          c.classList.remove("active")
+        );
+        const activeConv = Array.from(convList.children).find(
+          (c) => c.dataset.user === user
+        );
+        if (activeConv) activeConv.classList.add("active");
+
+        for (const m of data.items.reverse()) {
+          msgs.append(renderMessage(m));
+          msgs.scrollTop = msgs.scrollHeight;
+        }
+      }
+
+      async function openDialog(user) {
+        if (window.chatReloadInterval) {
+          clearInterval(window.chatReloadInterval);
+        }
+        reloadChat(user);
+        window.chatReloadInterval = setInterval(() => reloadChat(user), 2000);
+      }
+
+      btnSend.onclick = async () => {
+        const text = input.value.trim();
+        const manualRecipient = recipientInput.value.trim();
+        let recipient = currentOther || manualRecipient;
+
+        if (!text || !recipient) {
+          console.log("Enter username and message!");
+          return;
+        }
+
+        const r = await fetch("/msg", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ recipientName: recipient, text }),
+        });
+
+        if (r.ok) {
+          errorBox.style.display = "none"; // hide error
+          const msg = await r.json();
+          msgs.append(renderMessage(msg));
+          msgs.scrollTop = msgs.scrollHeight;
+          input.value = "";
+          addConversationToList(recipient);
+          openDialog(recipient);
+        } else if (r.status === 404) {
+          errorBox.style.display = "block"; // show error
+        } else {
+          console.error("Failed to send!");
+        }
+      };
+
+      loadConversations();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Event Details</title>
+    <link rel="stylesheet" href="static/style.css" />
+    <link rel="stylesheet" href="static/Events.css" />
+    <script src="static/event-details.js" defer></script>
+  </head>
+  <body>
+     <nav class="navbar">
+      <a href="/">Home</a>
+      <a href="#about">About</a>
+      <a href="event">Events</a>
+      <a href="event?wishlist=1" id="wishlist-link">My Wishlist</a>
+      <a href="mybookings.html" id="bookings-link">My Bookings</a>
+      <a href="#about">Contact</a>
+    </nav>
+
+    <main class="event-details-container">
+      <div id="event-details"></div>
+
+      <h2>Reviews</h2>
+      <div id="reviews"></div>
+
+      <form id="review-form">
+        <textarea
+          id="review-text"
+          placeholder="Write your review..."
+          required
+        ></textarea>
+        <button type="submit">Send</button>
+      </form>
+    </main>
+
+    <footer>
+      <div class="footer-bottom">© 2025 Eventify. All rights reserved.</div>
+    </footer>
+  </body>
+</html>

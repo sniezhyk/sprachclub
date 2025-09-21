@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Event erstellen</title>
+    <link rel="stylesheet" href="static/event-create.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <a href="/">Home</a>
+      <a href="/event-create.html" class="active">Event erstellen</a>
+      <a href="/my-event.html" id="manageLink" class="link">Events verwalten</a>
+      <div class="spacer"></div>
+      <a class="link" href="/account.html">Mein Account</a>
+    </nav>
+
+    <main class="page">
+      <h1>Neues Event erstellen</h1>
+      <p class="muted">
+        Nur Organizer dürfen Events anlegen. Der Organizer-Name wird automatisch
+        aus deiner Sitzung gesetzt.
+      </p>
+
+      <form id="eventForm" class="card">
+        <div class="grid">
+          <label
+            >Titel
+            <input
+              type="text"
+              id="title"
+              required
+              placeholder="Titel des Events"
+            />
+          </label>
+          <label
+            >Datum
+            <input type="date" id="eventDate" required />
+          </label>
+          <label
+            >Ort
+            <input
+              type="text"
+              id="location"
+              required
+              placeholder="Stadt, Location"
+            />
+          </label>
+          <label
+            >Kategorie (optional)
+            <input
+              type="text"
+              id="categoryName"
+              placeholder="Muss in 'category' existieren"
+            />
+          </label>
+          <label
+            >Preis (€)
+            <input
+              type="number"
+              id="price"
+              required
+              min="0"
+              step="0.01"
+              placeholder="0.00"
+            />
+          </label>
+          <label
+            >Kapazität
+            <input
+              type="number"
+              id="capacity"
+              required
+              min="0"
+              step="1"
+              placeholder="100"
+            />
+          </label>
+          <label class="col-span-2"
+            >Beschreibung (optional)
+            <textarea
+              id="description"
+              rows="5"
+              placeholder="Kurze Beschreibung…"
+            ></textarea>
+          </label>
+        </div>
+
+        <div class="actions">
+          <button type="submit" class="btn btn-primary">Event speichern</button>
+          <a class="btn" href="/my-event.html">Events verwalten</a>
+          <a class="btn" href="/account.html">Abbrechen</a>
+        </div>
+
+        <div id="msg" class="msg" aria-live="polite"></div>
+      </form>
+    </main>
+
+    <script src="static/event-create.js" defer></script>
+  </body>
+</html>
