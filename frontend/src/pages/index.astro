@@ -1,16 +1,235 @@
 ---
+import BasicLayout from "../layouts/BasicLayout/index.astro";
 
+import "./index/style.css";
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BasicLayout>
+  <main class="container" role="main">
+    <section class="hero">
+      <h1>Finde & buche deinen Deutsch-Sprachclub</h1>
+      <p class="muted">
+        Wähle Niveau, Termin und sichere dir deinen Platz – schnell und
+        unkompliziert.
+      </p>
+    </section>
+
+    <section class="filters" aria-label="Filter">
+      <form id="filter-form" class="row" autocomplete="off">
+        <label class="field">
+          <span>Stichwort</span>
+          <input
+            type="search"
+            id="q"
+            name="q"
+            placeholder="Thema oder Begriff"
+          />
+        </label>
+        <label class="field">
+          <span>Niveau</span>
+          <select id="level" name="level">
+            <option value="">Alle</option>
+            <option value="A2.1">A2.1</option>
+            <option value="A2.2">A2.2</option>
+            <option value="A2/B1">A2/B1</option>
+            <option value="B2/C1">B2/C1</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Ab Datum</span>
+          <input type="date" id="from" name="from" />
+        </label>
+        <button type="submit" class="btn">Suchen</button>
+      </form>
+    </section>
+
+    <section class="list-wrap" aria-live="polite" aria-busy="false">
+      <ul id="club-list" class="grid"></ul>
+      <p id="empty" class="muted">Keine passenden Sprachclubs gefunden.</p>
+    </section>
+
+    <nav id="pager" class="pager" aria-label="Seitennavigation" hidden>
+      <button id="prev" class="btn btn-ghost" disabled>Zurück</button>
+      <span id="page-info" class="muted"></span>
+      <button id="next" class="btn btn-ghost" disabled>Weiter</button>
+    </nav>
+  </main>
+
+  <dialog id="auth" class="dialog" aria-label="Anmeldung & Registrierung">
+    <div class="tabs" role="tablist">
+      <button
+        id="tab-login"
+        role="tab"
+        aria-selected="true"
+        aria-controls="panel-login">Login</button
+      >
+      <button
+        id="tab-register"
+        role="tab"
+        aria-selected="false"
+        aria-controls="panel-register">Registrieren</button
+      >
+    </div>
+
+    <form
+      id="panel-login"
+      class="stack"
+      role="tabpanel"
+      aria-labelledby="tab-login"
+      novalidate
+    >
+      <div id="login-errors" class="error-summary" hidden></div>
+
+      <label class="field">
+        <span>E-Mail oder Nutzername</span>
+        <input type="text" name="email" required autocomplete="username" />
+        <small class="error-msg" hidden></small>
+      </label>
+
+      <label class="field">
+        <span>Passwort</span>
+        <input
+          type="password"
+          name="password"
+          required
+          autocomplete="current-password"
+        />
+        <small class="error-msg" hidden></small>
+      </label>
+
+      <div class="row end">
+        <button type="button" class="btn btn-ghost close-auth">Abbrechen</button
+        >
+        <button type="submit" class="btn">Einloggen</button>
+      </div>
+    </form>
+
+    <form
+      id="panel-register"
+      class="stack"
+      role="tabpanel"
+      aria-labelledby="tab-register"
+      hidden
+      novalidate
+    >
+      <div id="register-errors" class="error-summary" hidden></div>
+
+      <div class="grid-2">
+        <label class="field">
+          <span>Vorname</span>
+          <input
+            type="text"
+            name="first_name"
+            required
+            autocomplete="given-name"
+            maxlength="80"
+          />
+          <small class="error-msg" hidden></small>
+        </label>
+        <label class="field">
+          <span>Nachname</span>
+          <input
+            type="text"
+            name="last_name"
+            required
+            autocomplete="family-name"
+            maxlength="80"
+          />
+          <small class="error-msg" hidden></small>
+        </label>
+      </div>
+
+      <label class="field">
+        <span>Nutzername</span>
+        <input
+          type="text"
+          name="username"
+          required
+          autocomplete="username"
+          maxlength="32"
+        />
+        <small class="error-msg" hidden></small>
+      </label>
+
+      <label class="field">
+        <span>E-Mail</span>
+        <input
+          type="email"
+          name="email"
+          required
+          autocomplete="email"
+          maxlength="254"
+        />
+        <small class="error-msg" hidden></small>
+      </label>
+
+      <div class="grid-2">
+        <label class="field">
+          <span>Passwort</span>
+          <input
+            type="password"
+            name="password"
+            required
+            autocomplete="new-password"
+            minlength="8"
+          />
+          <small class="muted">Mind. 8 Zeichen</small>
+          <small class="error-msg" hidden></small>
+        </label>
+        <label class="field">
+          <span>Passwort wiederholen</span>
+          <input
+            type="password"
+            name="password_repeat"
+            required
+            autocomplete="new-password"
+            minlength="8"
+          />
+          <small class="error-msg" hidden></small>
+        </label>
+      </div>
+
+      <label class="field">
+        <span>Geburtsdatum (optional)</span>
+        <input type="date" name="birth_date" />
+        <small class="error-msg" hidden></small>
+      </label>
+
+      <label class="check">
+        <input type="checkbox" name="tos" required />
+        <span
+          >Ich akzeptiere die <a href="/agb" target="_blank" rel="noopener"
+            >AGB</a
+          ></span
+        >
+      </label>
+
+      <div class="row end">
+        <button type="button" class="btn btn-ghost close-auth">Abbrechen</button
+        >
+        <button type="submit" class="btn">Konto erstellen</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="details" class="dialog" aria-label="Details zum Sprachclub">
+    <article class="stack">
+      <h2 id="d-title"></h2>
+      <p id="d-desc" class="muted"></p>
+      <div class="meta">
+        <span id="d-level" class="tag"></span>
+        <span id="d-when"></span>
+        <span id="d-capacity"></span>
+        <span id="d-price"></span>
+      </div>
+      <div class="row end">
+        <button type="button" class="btn btn-ghost" id="close-details"
+          >Schließen</button
+        >
+        <button type="button" class="btn" id="book-now">Jetzt buchen</button>
+      </div>
+    </article>
+  </dialog>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+</BasicLayout>

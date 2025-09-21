@@ -1,0 +1,195 @@
+---
+import { Button } from "@/components/ui/button";
+import "../../styles/global.css";
+import Dropdown from "./MainDropdown";
+import { HostDropdown, UserDropdown } from "./AccountDropdown";
+---
+
+<!doctype html>
+<html lang="de" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Top Deutsche Online Sprachclubs | Deutsch sprechen & üben</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="container flex h-16 items-center justify-between">
+        <a href="/" class="text-lg font-semibold tracking-tight">
+          Sprachclubs
+        </a>
+
+        <nav class="flex items-center gap-6 text-sm font-medium">
+          <a href="#termine" class="transition-colors hover:text-primary">
+            Termine
+          </a>
+
+          <Dropdown client:load />
+
+          <div id="dropdown-user">
+            <UserDropdown client:load />
+          </div>
+          <div id="dropdown-host" style={{ display: "none" }}>
+            <HostDropdown client:load />
+          </div>
+
+          <div id="accountInfo" style={{ display: "none" }}>
+            <Button variant="outline" size="sm" id="btn-logout">Logout</Button>
+          </div>
+          <div id="login">
+            <Button variant="outline" size="sm" id="btn-login">Login</Button>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <slot />
+
+    <footer>
+      <div class="footer-links">
+        <div>
+          <h4>Sprachclub</h4>
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/ueber-uns">Über uns</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4>Service</h4>
+          <ul>
+            <li><a href="/service">Service</a></li>
+            <li><a href="/kontakt">Kontakt</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-social">
+        <a
+          href="https://t.me/deutsch_mit_sandra"
+          target="_blank"
+          rel="noopener"
+        >
+          <img src="/social/telegram.svg" alt="" />
+          <span>Telegram</span>
+        </a>
+
+        <a
+          href="https://www.instagram.com/olexandra_slobodianiuk?igsh=dXhib3A1bm9haXJ2"
+          target="_blank"
+          rel="noopener"
+        >
+          <img src="/social/instagram.svg" alt="" />
+          <span>Instagram</span>
+        </a>
+      </div>
+
+      <div class="footer-legal">
+        © <span>2025</span> Sprachclub ·
+        <a href="/datenschutz">Datenschutz</a> ·
+        <a href="/agb" target="_blank" rel="noopener">AGB</a> ·
+        <a href="/impressum">Impressum</a>
+      </div>
+    </footer>
+  </body>
+</html>
+
+<style>
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+
+    background-color: #0c0c0d;
+    color: white;
+  }
+
+  footer {
+    margin-top: auto;
+    padding: 3vmin;
+
+    color: #545454;
+    border-top: 2px #2a2b2e solid;
+  }
+
+  .footer-links {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .footer-links h4 {
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: white;
+  }
+
+  .footer-social {
+    display: flex;
+    gap: 20px;
+  }
+
+  .footer-social > a {
+    display: flex;
+    gap: 3px;
+    padding-top: 1vmin;
+  }
+
+  .footer-social > a > img {
+    width: 24px;
+    height: 24px;
+  }
+
+  .footer-legal {
+    border-top: 2px #2a2b2e dotted;
+    margin-top: 2vmin;
+    padding-top: 1vmin;
+  }
+
+  header {
+    min-height: 70px;
+    height: 5vh;
+    padding: 3vmin;
+
+    display: flex;
+    align-items: center;
+
+    background-color: #0f1011;
+    color: white;
+    border-bottom: 2px #2a2b2e solid;
+  }
+
+  .navitems {
+    margin-left: auto;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+</style>
+
+<script>
+  import { checkAuth } from "@/scripts/auth";
+
+  const user = await checkAuth();
+  if (user) {
+    document.getElementById("accountInfo")!.style.display = "block";
+    document.getElementById("login")!.style.display = "none";
+
+    if (user.is_host) {
+      document.getElementById("dropdown-host")!.style.display = "block";
+      document.getElementById("dropdown-user")!.style.display = "none";
+    }
+  }
+
+  document.getElementById("btn-logout")!.addEventListener("click", async () => {
+    const res = await fetch("http://localhost:5000/api/auth/logout", {
+      method: "POST",
+      credentials: "include",
+    });
+    if (!res.ok) {
+      alert("Fehler beim Ausloggen");
+      return;
+    }
+    window.location.href = "/";
+  });
+</script>

@@ -4,6 +4,7 @@ import time  # ✅
 from urllib.parse import quote_plus
 
 from flask import Flask, render_template, jsonify, send_file, url_for  # url_for optional
+from flask_cors import CORS
 from dotenv import load_dotenv
 
 from extensions import db, init_extensions, login_manager
@@ -28,6 +29,8 @@ def create_app() -> Flask:
         static_folder="static",
         static_url_path="/static",
     )
+
+    CORS(app, supports_credentials=True)
 
     # ---- Basis-Config ----
     app.config["SECRET_KEY"] = os.getenv("SECRET_KEY") or os.getenv("SESSION_KEY") or "dev-insecure"
